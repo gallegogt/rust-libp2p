@@ -1,10 +1,16 @@
-# 0.34.0 [unreleased]
+# 0.34.0
 
 - Update to `libp2p-core` `v0.34.0`.
 
 - Call `TcpStream::take_error` in tokio `Provider` to report connection
   establishment errors early. See also [PR 2458] for the related async-io
   change.
+
+- Split `GenTcpConfig` into `GenTcpConfig` and `GenTcpTransport`. Drive the `TcpListenStream`s
+  within the `GenTcpTransport`. Add `Transport::poll` and `Transport::remove_listener`
+  for `GenTcpTransport`. See [PR 2652].
+
+[PR 2652]: https://github.com/libp2p/rust-libp2p/pull/2652
 
 # 0.33.0
 

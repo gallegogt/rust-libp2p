@@ -1,10 +1,13 @@
-# 0.37.0 [unreleased]
+# 0.37.0
 
 - Update to `libp2p-core` `v0.34.0`.
 
 - Extend log message when exceeding inbound negotiating streams with peer ID and limit. See [PR 2716].
 
+- Remove `connection::ListenersStream` and poll the `Transport` directly. See [PR 2652].
+
 [PR 2716]: https://github.com/libp2p/rust-libp2p/pull/2716/
+[PR 2652]: https://github.com/libp2p/rust-libp2p/pull/2652
 
 # 0.36.1
 

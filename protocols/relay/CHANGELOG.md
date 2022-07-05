@@ -1,4 +1,4 @@
-# 0.10.0 [unreleased]
+# 0.10.0
 
 - Update to `libp2p-core` `v0.34.0`.
 
@@ -6,7 +6,11 @@
 
 - Do not duplicate the p2p/xxx component with the relay PeerId when a client requests a reservation. See [PR 2701].
 
+- Drive the `RelayListener`s within the `ClientTransport`. Add `Transport::poll` and `Transport::remove_listener`
+  for `ClientTransport`. See [PR 2652].
+
 [PR 2701]: https://github.com/libp2p/rust-libp2p/pull/2701/
+[PR 2652]: https://github.com/libp2p/rust-libp2p/pull/2652
 
 # 0.9.1
 
