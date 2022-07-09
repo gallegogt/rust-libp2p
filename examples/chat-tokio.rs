@@ -41,7 +41,11 @@ use libp2p::{
     core::upgrade,
     floodsub::{self, Floodsub, FloodsubEvent},
     identity,
-    mdns::{Mdns, MdnsEvent},
+    mdns::{
+        // `MdnsTokio` is available through the `mdns-tokio` feature.
+        TokioMdns, 
+        MdnsEvent
+    },
     mplex,
     noise,
     swarm::{dial_opts::DialOpts, NetworkBehaviourEventProcess, SwarmBuilder, SwarmEvent},
@@ -90,7 +94,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     #[behaviour(event_process = true)]
     struct MyBehaviour {
         floodsub: Floodsub,
-        mdns: Mdns,
+        mdns: TokioMdns,
     }
 
     impl NetworkBehaviourEventProcess<FloodsubEvent> for MyBehaviour {
@@ -128,7 +132,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     // Create a Swarm to manage peers and events.
     let mut swarm = {
-        let mdns = Mdns::new(Default::default()).await?;
+        let mdns = TokioMdns::new(Default::default()).await?;
         let mut behaviour = MyBehaviour {
             floodsub: Floodsub::new(peer_id.clone()),
             mdns,
