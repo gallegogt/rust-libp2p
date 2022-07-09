@@ -2,7 +2,7 @@
 
 - Update to `libp2p-swarm` `v0.38.0`.
 
-- fix(protocols/mdns): fix high cpu usage with tokio library.
+- Fix high CPU usage with Tokio library (see [PR 2748]).
 
 # 0.38.0
 
