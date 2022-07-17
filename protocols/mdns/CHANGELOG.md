@@ -2,7 +2,9 @@
 
 - Update to `libp2p-swarm` `v0.38.0`.
 
-- Fix high CPU usage with Tokio library (see [PR 2748](https://github.com/libp2p/rust-libp2p/pull/2748) ).
+- Fix high CPU usage with Tokio library (see [PR 2748]).
+
+[PR 2748]: https://github.com/libp2p/rust-libp2p/pull/2748
 
 # 0.38.0
 
