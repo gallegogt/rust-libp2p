@@ -4,6 +4,8 @@
 
 - Fix high CPU usage with Tokio library (see [PR 2748]).
 
+- Update to `libp2p-core` `v0.35.0`.
+
 [PR 2748]: https://github.com/libp2p/rust-libp2p/pull/2748
 
 # 0.38.0
