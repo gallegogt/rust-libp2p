@@ -1,6 +1,7 @@
 # 0.39.0 [unreleased]
 
 - Update to `libp2p-swarm` `v0.38.0`.
+- Update to `if-watch` `v1.1.1`.
 
 - Allow users to choose between async-io and tokio runtime
   in the mdns protocol implementation. `async-io` is a default
