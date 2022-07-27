@@ -27,7 +27,7 @@ use crate::behaviour::{socket::AsyncSocket, timer::Builder};
 use crate::MdnsConfig;
 use futures::prelude::*;
 use futures::Stream;
-use if_watch::{IfEvent, IfWatcher};
+use if_watch::{IfEvent, Iface, Watcher};
 use libp2p_core::transport::ListenerId;
 use libp2p_core::{Multiaddr, PeerId};
 use libp2p_swarm::{
@@ -40,27 +40,31 @@ use std::{cmp, fmt, io, net::IpAddr, pin::Pin, task::Context, task::Poll, time::
 
 #[cfg(feature = "async-io")]
 use crate::behaviour::{socket::asio::AsyncUdpSocket, timer::asio::AsyncTimer};
+#[cfg(feature = "async-io")]
+use if_watch::AsioProvider;
 
 /// The type of a [`GenMdns`] using the `async-io` implementation.
 #[cfg(feature = "async-io")]
-pub type Mdns = GenMdns<AsyncUdpSocket, AsyncTimer>;
+pub type Mdns = GenMdns<AsyncUdpSocket, AsyncTimer, AsioProvider>;
 
 #[cfg(feature = "tokio")]
 use crate::behaviour::{socket::tokio::TokioUdpSocket, timer::tokio::TokioTimer};
+#[cfg(feature = "tokio")]
+use if_watch::TokioProvider;
 
 /// The type of a [`GenMdns`] using the `tokio` implementation.
 #[cfg(feature = "tokio")]
-pub type TokioMdns = GenMdns<TokioUdpSocket, TokioTimer>;
+pub type TokioMdns = GenMdns<TokioUdpSocket, TokioTimer, TokioProvider>;
 
 /// A `NetworkBehaviour` for mDNS. Automatically discovers peers on the local network and adds
 /// them to the topology.
 #[derive(Debug)]
-pub struct GenMdns<S, T> {
+pub struct GenMdns<S, T, W> {
     /// InterfaceState config.
     config: MdnsConfig,
 
     /// Iface watcher.
-    if_watch: IfWatcher,
+    if_watch: Watcher<W>,
 
     /// Mdns interface states.
     iface_states: HashMap<IpAddr, InterfaceState<S, T>>,
@@ -77,13 +81,14 @@ pub struct GenMdns<S, T> {
     closest_expiration: Option<T>,
 }
 
-impl<S, T> GenMdns<S, T>
+impl<S, T, W> GenMdns<S, T, W>
 where
     T: Builder,
+    W: Iface,
 {
     /// Builds a new `Mdns` behaviour.
     pub async fn new(config: MdnsConfig) -> io::Result<Self> {
-        let if_watch = if_watch::IfWatcher::new().await?;
+        let if_watch = Watcher::new().await?;
         Ok(Self {
             config,
             if_watch,
@@ -115,10 +120,11 @@ where
     }
 }
 
-impl<S, T> NetworkBehaviour for GenMdns<S, T>
+impl<S, T, W> NetworkBehaviour for GenMdns<S, T, W>
 where
     T: Builder + Stream,
     S: AsyncSocket,
+    W: 'static + std::marker::Unpin + Future<Output = std::io::Result<IfEvent>> + Iface,
 {
     type ConnectionHandler = DummyConnectionHandler;
     type OutEvent = MdnsEvent;
